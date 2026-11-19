@@ -1,0 +1,131 @@
+/* Chai & Co.: a pretend merchant with its own look, separate from PockIt. */
+:root {
+  --leaf: #2f6b4f;
+  --leaf-deep: #1f4a37;
+  --sage: #eef3ef;
+  --ink: #1e2b24;
+  --muted: #5d6b63;
+  --line: #d9e3dc;
+  --brass: #c8a15a;
+  --navy: #0b1f3a;  /* PockIt's colour, only on the PockIt button */
+  --gold: #e3b04b;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  font-family: "Schibsted Grotesk", system-ui, sans-serif;
+  color: var(--ink);
+  background: #fff;
+  line-height: 1.55;
+}
+h1, h2, p { margin: 0; }
+a { color: var(--leaf); }
+:focus-visible { outline: 2px solid var(--leaf); outline-offset: 2px; }
+
+.demo-banner {
+  padding: 0.55rem 1rem;
+  background: var(--navy);
+  color: #dbe6f5;
+  font-size: 0.82rem;
+  text-align: center;
+}
+.demo-banner a { color: var(--gold); margin-left: 0.5rem; }
+
+.shop-head {
+  padding: 2.5rem clamp(1rem, 5vw, 3rem) 2rem;
+  background: var(--sage);
+  border-bottom: 1px solid var(--line);
+}
+.shop-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 800;
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  color: var(--leaf-deep);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+.shop-logo svg { width: 2.4rem; height: 2.4rem; }
+.shop-tag { margin-top: 0.35rem; color: var(--muted); }
+
+.shop { max-width: 1000px; margin: 0 auto; padding: 2.5rem clamp(1rem, 5vw, 3rem) 3rem; display: grid; gap: 1.5rem; }
+.shop h1 { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.6rem; }
+
+.products { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
+.product {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.product-art { width: 100%; height: 120px; background: var(--sage); border-radius: 10px; padding: 0.75rem; }
+.product h2 { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 1.25rem; margin-top: 0.5rem; }
+.product p { color: var(--muted); font-size: 0.92rem; }
+.product-buy { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: 0.75rem; }
+.price { font-weight: 700; font-size: 1.15rem; }
+
+/* The merchant's "Pay with PockIt" button keeps PockIt's own colours. */
+.pockit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.6rem;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 10px;
+  background: var(--navy);
+  color: #fff;
+  font: inherit;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.pockit-btn:hover { background: #16325c; }
+.pockit-btn:disabled { opacity: 0.6; cursor: progress; }
+.pockit-word { display: inline-flex; align-items: center; gap: 0.3rem; font-weight: 800; }
+.pockit-word::before {
+  content: "";
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.order-status {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+  padding: 1.1rem 1.25rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--sage);
+}
+.order-status h2 { font-size: 1.05rem; }
+.order-status p { color: var(--muted); font-size: 0.92rem; }
+.order-status .dot { width: 0.85rem; height: 0.85rem; border-radius: 50%; background: var(--brass); }
+.order-status.is-paid { background: #e6f5ec; border-color: #bfe3cd; }
+.order-status.is-paid .dot { background: var(--leaf); }
+.order-status.is-bad { background: #fbeeec; border-color: #f0cdc6; }
+.order-status.is-bad .dot { background: #b4321f; }
+.order-status.is-waiting .dot { animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.3; } }
+
+.shop-error { color: #b4321f; min-height: 1.4em; }
+
+.shop-foot {
+  max-width: 1000px;
+  margin: 0 auto 3rem;
+  padding: 1.25rem clamp(1rem, 5vw, 3rem) 0;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .order-status.is-waiting .dot { animation: none; }
+}

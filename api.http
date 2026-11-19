@@ -1,0 +1,101 @@
+### Try the API straight from VS Code with the "REST Client" extension.
+### Click "Send Request" above each block. Start Django first (port 8000).
+
+@base = http://127.0.0.1:8000/api
+
+### 1. Sign up Rahul
+# @name rahul
+POST {{base}}/auth/signup
+Content-Type: application/json
+
+{ "name": "Rahul", "email": "rahul@example.com", "password": "s3cure-pass-123" }
+
+### 2. Sign up Priya
+POST {{base}}/auth/signup
+Content-Type: application/json
+
+{ "name": "Priya", "email": "priya@example.com", "password": "s3cure-pass-123" }
+
+### 3. Log in as Rahul (if he already exists)
+# @name login
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "rahul@example.com", "password": "s3cure-pass-123" }
+
+@token = {{login.response.body.access}}
+
+### 4. Balance
+GET {{base}}/wallet
+Authorization: Bearer {{token}}
+
+### 5. Add ₹500
+POST {{base}}/wallet/topup
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Idempotency-Key: topup-demo-001
+
+{ "amount": "500" }
+
+### 6. Send ₹200 to Priya. Send this TWICE: the second time you'll get the
+###    same response with header "Idempotent-Replayed: true" and no second charge.
+POST {{base}}/transfers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Idempotency-Key: transfer-demo-001
+
+{ "to_email": "priya@example.com", "amount": "200" }
+
+### 7. History
+GET {{base}}/transactions?page=1
+Authorization: Bearer {{token}}
+
+### 8. Ask Priya for ₹150
+POST {{base}}/requests
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "from_email": "priya@example.com", "amount": "150", "note": "Cab to the airport" }
+
+### 9. Your requests (incoming = others asking you)
+GET {{base}}/requests?direction=incoming&status=pending
+Authorization: Bearer {{token}}
+
+### 10. Pay request #1 (log in as the payer first). Send twice: charged once.
+POST {{base}}/requests/1/pay
+Authorization: Bearer {{token}}
+Idempotency-Key: pay-request-demo-001
+
+
+### ---------------------------------------------------------------- Merchant API
+### 11. Create a checkout as a shop's server, using its SECRET key
+###     (seed_demo prints the Chai & Co. key once; or get one on the Business page)
+@shopKey = sk_test_paste_your_key_here
+
+# @name order
+POST {{base}}/v1/orders
+Authorization: Bearer {{shopKey}}
+Content-Type: application/json
+
+{ "amount": "499.00", "description": "Order #1042", "return_url": "/shop/" }
+
+### 12. Open the checkout_url from the response in your browser and pay.
+###     Then look the order up:
+GET {{base}}/v1/orders/{{order.response.body.id}}
+Authorization: Bearer {{shopKey}}
+
+### 13. Refund part of it. Send twice: refunded once.
+POST {{base}}/v1/orders/{{order.response.body.id}}/refunds
+Authorization: Bearer {{shopKey}}
+Content-Type: application/json
+Idempotency-Key: refund-demo-001
+
+{ "amount": "99.00", "reason": "Late delivery" }
+
+### 14. A risky payment: a brand-new account sending more than ₹5,000 is held (202)
+POST {{base}}/transfers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+Idempotency-Key: risky-demo-001
+
+{ "to_email": "priya@example.com", "amount": "6000" }

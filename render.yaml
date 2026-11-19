@@ -1,0 +1,31 @@
+# One-click deployment on Render (https://render.com):
+#   Dashboard → New → Blueprint → pick this GitHub repo → Apply.
+# It creates a PostgreSQL database and one web service that runs the API
+# AND serves the front end, then sets up the demo account.
+databases:
+  - name: pockit-db
+    plan: free
+    databaseName: wallet
+    user: wallet
+
+services:
+  - type: web
+    name: pockit
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: python manage.py migrate --noinput && python manage.py seed_demo && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pockit-db
+          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: ".onrender.com"

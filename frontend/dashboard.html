@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B1F3A">
+  <title>PockIt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='12' fill='%230B1F3A'/><circle cx='24' cy='15' r='7.5' fill='%23E3B04B'/><path d='M10.5 20.5h27v11L24 39.5l-13.5-8z' fill='%23FFFFFF'/></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app">
+  <header class="topbar">
+    <a class="brand" href="dashboard.html"><svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true"><rect class="bm-tile" width="48" height="48" rx="12"/><circle cx="24" cy="15" r="7.5" fill="#E3B04B"/><circle cx="24" cy="15" r="4.2" fill="none" stroke="#0B1F3A" stroke-width="1.4" opacity=".5"/><path d="M10.5 20.5h27v11L24 39.5l-13.5-8z" fill="#FFFFFF" stroke-linejoin="round"/><path d="M14 24.5h20" stroke="#0B1F3A" stroke-width="1.5" stroke-dasharray="2.2 1.8" opacity=".55"/></svg>PockIt</a>
+    <nav class="topnav" aria-label="Main">
+      <a href="dashboard.html" aria-current="page">Wallet</a>
+      <a href="merchant.html">Business</a>
+      <a href="/shop/">Demo shop</a>
+    </nav>
+    <div class="account">
+      <span class="avatar" id="avatar" aria-hidden="true"></span>
+      <span class="account-name" id="user-name"></span>
+      <button id="logout" class="btn btn--ghost">Log out</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <div class="main-col">
+      <!-- Wallet card: the one bold element on the page -->
+      <section class="wallet-card" aria-labelledby="balance-label">
+        <svg class="rosette rosette--card" viewBox="-100 -100 200 200" aria-hidden="true">
+          <defs><ellipse id="petal-b" cx="0" cy="0" rx="92" ry="30" /></defs>
+          <g fill="none" stroke="currentColor" stroke-width="0.6">
+            <use href="#petal-b" transform="rotate(0)"/><use href="#petal-b" transform="rotate(12)"/>
+            <use href="#petal-b" transform="rotate(24)"/><use href="#petal-b" transform="rotate(36)"/>
+            <use href="#petal-b" transform="rotate(48)"/><use href="#petal-b" transform="rotate(60)"/>
+            <use href="#petal-b" transform="rotate(72)"/><use href="#petal-b" transform="rotate(84)"/>
+            <use href="#petal-b" transform="rotate(96)"/><use href="#petal-b" transform="rotate(108)"/>
+            <use href="#petal-b" transform="rotate(120)"/><use href="#petal-b" transform="rotate(132)"/>
+            <use href="#petal-b" transform="rotate(144)"/><use href="#petal-b" transform="rotate(156)"/>
+            <use href="#petal-b" transform="rotate(168)"/>
+            <circle r="34"/><circle r="38"/><circle r="96"/>
+          </g>
+        </svg>
+
+        <div class="wallet-top">
+          <p id="balance-label" class="wallet-label">Available balance</p>
+          <p id="balance" class="balance" aria-live="polite">₹—</p>
+          <p class="wallet-owner" id="wallet-owner"></p>
+        </div>
+
+        <div class="wallet-actions">
+          <button class="btn btn--gold" data-open="transfer">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+            Send
+          </button>
+          <button class="btn btn--on-dark" data-open="request">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7 7 17M15 17H7V9"/></svg>
+            Request
+          </button>
+          <button class="btn btn--on-dark" data-open="topup">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Add money
+          </button>
+        </div>
+      </section>
+
+      <!-- Payment requests (hidden until there are any) -->
+      <section class="requests" id="requests" aria-labelledby="requests-title" hidden>
+        <div class="section-head">
+          <h2 id="requests-title">Requests</h2>
+          <span class="section-meta" id="requests-meta"></span>
+        </div>
+        <ul class="request-list" id="request-list"></ul>
+      </section>
+
+      <!-- Passbook -->
+      <section class="passbook" aria-labelledby="passbook-title">
+        <div class="section-head">
+          <h2 id="passbook-title">Passbook</h2>
+          <span class="section-meta" id="passbook-count"></span>
+        </div>
+
+        <div class="ledger-columns" aria-hidden="true">
+          <span>Details</span><span>Amount</span><span>Balance</span>
+        </div>
+        <ul id="history" class="ledger"></ul>
+
+        <nav class="pager" aria-label="Passbook pages">
+          <button id="prev-page" class="btn btn--quiet" disabled>Newer</button>
+          <span id="page-info" class="pager-info"></span>
+          <button id="next-page" class="btn btn--quiet" disabled>Older</button>
+        </nav>
+      </section>
+    </div>
+
+    <!-- Action panel -->
+    <aside class="panel" aria-label="Move money">
+      <div class="segmented" role="tablist" aria-label="Action">
+        <button class="segment is-active" data-tab="transfer" role="tab" aria-selected="true">Send</button>
+        <button class="segment" data-tab="request" role="tab" aria-selected="false">Request</button>
+        <button class="segment" data-tab="topup" role="tab" aria-selected="false">Add money</button>
+      </div>
+
+      <form id="transfer-form" class="form" data-panel="transfer">
+        <label class="field">
+          <span>Recipient's email</span>
+          <input type="email" name="to_email" required placeholder="priya@example.com" autocomplete="off">
+        </label>
+        <p class="recipient-check" data-recipient-for="to_email" aria-live="polite"></p>
+        <label class="field">
+          <span>Amount</span>
+          <div class="money-input">
+            <span class="money-prefix" aria-hidden="true">₹</span>
+            <input type="number" name="amount" min="0.01" step="0.01" required placeholder="0.00" inputmode="decimal">
+          </div>
+        </label>
+        <label class="field">
+          <span>What's it for? <em class="optional">Optional</em></span>
+          <input type="text" name="note" maxlength="140" placeholder="Dinner, rent, movie tickets">
+        </label>
+        <button type="submit" class="btn btn--primary btn--block">Send money</button>
+        <p class="hint">Money arrives instantly. Sending twice by accident won't charge you twice.</p>
+      </form>
+
+      <form id="request-form" class="form" data-panel="request" hidden>
+        <label class="field">
+          <span>Request from (email)</span>
+          <input type="email" name="from_email" required placeholder="rahul@example.com" autocomplete="off">
+        </label>
+        <p class="recipient-check" data-recipient-for="from_email" aria-live="polite"></p>
+        <label class="field">
+          <span>Amount</span>
+          <div class="money-input">
+            <span class="money-prefix" aria-hidden="true">₹</span>
+            <input type="number" name="amount" min="0.01" step="0.01" required placeholder="0.00" inputmode="decimal">
+          </div>
+        </label>
+        <label class="field">
+          <span>What's it for? <em class="optional">Optional</em></span>
+          <input type="text" name="note" maxlength="140" placeholder="Your share of the cab">
+        </label>
+        <button type="submit" class="btn btn--primary btn--block">Send request</button>
+        <p class="hint">They'll see it in their Requests and can pay or decline. No money moves until they pay.</p>
+      </form>
+
+      <form id="topup-form" class="form" data-panel="topup" hidden>
+        <label class="field">
+          <span>Amount</span>
+          <div class="money-input">
+            <span class="money-prefix" aria-hidden="true">₹</span>
+            <input type="number" name="amount" min="0.01" max="100000" step="0.01" required placeholder="0.00" inputmode="decimal">
+          </div>
+        </label>
+        <div class="quick-amounts" role="group" aria-label="Quick amounts">
+          <button type="button" class="chip" data-amount="100">₹100</button>
+          <button type="button" class="chip" data-amount="500">₹500</button>
+          <button type="button" class="chip" data-amount="1000">₹1,000</button>
+          <button type="button" class="chip" data-amount="2000">₹2,000</button>
+        </div>
+        <button type="submit" class="btn btn--primary btn--block">Add money</button>
+        <p class="hint">This is a demo top-up. No bank account is charged. Up to ₹1,00,000 at a time.</p>
+      </form>
+    </aside>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

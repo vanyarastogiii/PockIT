@@ -1,0 +1,24 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Django: runserver",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/manage.py",
+      "args": ["runserver", "8000"],
+      "cwd": "${workspaceFolder}/backend",
+      "django": true,
+      "justMyCode": true
+    },
+    {
+      "name": "Django: run tests",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/manage.py",
+      "args": ["test", "-v", "2"],
+      "cwd": "${workspaceFolder}/backend",
+      "django": true
+    }
+  ]
+}

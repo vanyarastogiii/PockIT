@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B1F3A">
+  <title>PockIt · Business</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='12' fill='%230B1F3A'/><circle cx='24' cy='15' r='7.5' fill='%23E3B04B'/><path d='M10.5 20.5h27v11L24 39.5l-13.5-8z' fill='%23FFFFFF'/></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app">
+  <header class="topbar">
+    <a class="brand" href="dashboard.html" id="brand">PockIt</a>
+    <nav class="topnav" aria-label="Main">
+      <a href="dashboard.html">Wallet</a>
+      <a href="merchant.html" aria-current="page">Business</a>
+      <a href="/shop/">Demo shop</a>
+    </nav>
+    <div class="account">
+      <span class="avatar" id="avatar" aria-hidden="true"></span>
+      <span class="account-name" id="user-name"></span>
+      <button id="logout" class="btn btn--ghost">Log out</button>
+    </div>
+  </header>
+
+  <main class="biz">
+    <p class="ledger-loading" id="biz-loading">Loading…</p>
+
+    <!-- Not a merchant yet -->
+    <section class="biz-onboard" id="onboard" hidden>
+      <h1>Accept payments with PockIt</h1>
+      <p class="biz-lead">Add a <strong>Pay with PockIt</strong> button to your website. Customers pay from their PockIt wallet,
+        the money lands in yours, and you can refund any order from this page.</p>
+      <form class="form biz-onboard-form" id="onboard-form">
+        <label class="field">
+          <span>Business name</span>
+          <input name="name" required maxlength="80" placeholder="Meera's Bakery">
+        </label>
+        <label class="field">
+          <span>Webhook URL <em class="optional">Optional, you can add it later</em></span>
+          <input name="webhook_url" type="url" placeholder="https://your-site.com/webhooks/pockit">
+        </label>
+        <button class="btn btn--primary" type="submit">Start accepting payments</button>
+      </form>
+    </section>
+
+    <!-- One-time secret key -->
+    <section class="secret-box" id="secret-box" hidden>
+      <h2>Your secret API key</h2>
+      <p>Copy it now and keep it on your server. For your security, PockIt only stores a scrambled version, so <strong>this is the only time you'll see it</strong>.</p>
+      <div class="secret-row"><code id="secret-key"></code><button class="btn btn--quiet btn--sm" id="copy-key">Copy</button></div>
+      <button class="btn btn--ghost btn--sm" id="secret-done">I've saved it</button>
+    </section>
+
+    <!-- Merchant dashboard -->
+    <div id="dashboard" hidden>
+      <section class="biz-head">
+        <div>
+          <p class="checkout-label">Business</p>
+          <h1 id="biz-name"></h1>
+        </div>
+        <dl class="biz-stats" id="biz-stats"></dl>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>Orders</h2>
+          <span class="section-meta" id="orders-meta"></span>
+        </div>
+        <div class="orders-columns" aria-hidden="true"><span>Order</span><span>Amount</span><span>Status</span><span></span></div>
+        <ul class="orders" id="orders"></ul>
+      </section>
+
+      <section class="dev">
+        <div class="section-head"><h2>Developers</h2></div>
+        <div class="dev-grid">
+          <div class="dev-card">
+            <h3>Secret API key</h3>
+            <p class="hint">Your server sends it as <code>Authorization: Bearer sk_test_…</code> to create orders and refunds.</p>
+            <div class="secret-row"><code id="key-hint"></code><button class="btn btn--quiet btn--sm" id="rotate-key">Replace key</button></div>
+          </div>
+          <form class="dev-card form" id="webhook-form">
+            <h3>Webhooks</h3>
+            <p class="hint">PockIt sends <code>order.paid</code>, <code>order.on_hold</code>, <code>order.declined</code> and
+              <code>refund.created</code> here, signed with your secret in the <code>PockIt-Signature</code> header.</p>
+            <label class="field"><span>Webhook URL</span><input name="webhook_url" type="url" placeholder="https://your-site.com/webhooks/pockit"></label>
+            <div class="secret-row"><span class="hint">Signing secret</span><code id="webhook-secret">whsec_••••••••</code><button type="button" class="btn btn--quiet btn--sm" id="reveal-secret">Show</button></div>
+            <button class="btn btn--primary btn--sm" type="submit">Save webhook URL</button>
+          </form>
+        </div>
+        <h3 class="dev-sub">Recent webhook deliveries</h3>
+        <ul class="deliveries" id="deliveries"></ul>
+        <h3 class="dev-sub">Create a checkout from your server</h3>
+        <pre class="code" id="code-sample"></pre>
+      </section>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/merchant.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B1F3A">
+  <title>Pay with PockIt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='12' fill='%230B1F3A'/><circle cx='24' cy='15' r='7.5' fill='%23E3B04B'/><path d='M10.5 20.5h27v11L24 39.5l-13.5-8z' fill='%23FFFFFF'/></svg>">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="checkout-page">
+  <main class="checkout">
+    <header class="checkout-brand">
+      <span class="brand" id="checkout-logo">PockIt</span>
+      <span class="checkout-secure">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        Secure checkout
+      </span>
+    </header>
+
+    <section class="checkout-card" aria-live="polite">
+      <div id="checkout-loading" class="checkout-state">Loading your checkout…</div>
+
+      <div id="checkout-main" hidden>
+        <div class="checkout-merchant">
+          <span class="avatar avatar--lg" id="merchant-initials" aria-hidden="true"></span>
+          <div>
+            <p class="checkout-label">You're paying</p>
+            <p class="checkout-merchant-name" id="merchant-name"></p>
+          </div>
+        </div>
+        <p class="checkout-desc" id="order-desc"></p>
+        <p class="checkout-amount" id="order-amount"></p>
+
+        <!-- Not logged in -->
+        <div id="checkout-login" hidden>
+          <a class="btn btn--primary btn--block" id="login-link" href="index.html">Log in to pay</a>
+          <p class="hint checkout-center">New to PockIt? You can sign up on the next page.</p>
+        </div>
+
+        <!-- Logged in -->
+        <div id="checkout-pay" hidden>
+          <div class="checkout-from">
+            <span>From your PockIt wallet</span>
+            <span><strong id="payer-name"></strong> <span class="muted" id="payer-balance"></span></span>
+          </div>
+          <button class="btn btn--gold btn--block btn--lg" id="pay-button">Pay</button>
+          <p class="form-error checkout-center" id="pay-error" role="alert"></p>
+        </div>
+
+        <a class="checkout-cancel" id="cancel-link" href="/">Cancel and go back</a>
+      </div>
+
+      <!-- Final states -->
+      <div id="checkout-done" class="checkout-state" hidden>
+        <span class="checkout-icon" id="done-icon" aria-hidden="true"></span>
+        <h1 id="done-title"></h1>
+        <p id="done-text"></p>
+        <a class="btn btn--primary" id="done-link" href="/">Back to the shop</a>
+      </div>
+    </section>
+
+    <p class="checkout-foot">The shop never sees your PockIt password or balance.</p>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/checkout.js"></script>
+</body>
+</html>
